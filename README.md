@@ -143,3 +143,141 @@ After cleaning:
 - Country-wise Comparisons
 
 ---
+#  Exploratory Data Analysis (EDA)
+
+After cleaning the dataset, exploratory data analysis was performed using SQL to identify trends, patterns, and insights related to layoffs across companies, industries, countries, and years.
+
+---
+
+##  Key Analysis Performed
+
+###  Maximum Layoffs & Layoff Percentage
+```sql
+SELECT MAX(total_laid_off),
+MAX(percentage_laid_off)
+FROM layoffs_staging2;
+```
+
+---
+
+###  Companies with 100% Layoffs
+```sql
+SELECT *
+FROM layoffs_staging2
+WHERE percentage_laid_off = 1
+ORDER BY total_laid_off DESC;
+```
+
+---
+
+###  Companies by Funds Raised
+```sql
+SELECT *
+FROM layoffs_staging2
+WHERE percentage_laid_off = 1
+ORDER BY funds_raised_millions DESC;
+```
+
+---
+
+###  Total Layoffs by Company
+```sql
+SELECT company,
+SUM(total_laid_off)
+FROM layoffs_staging2
+GROUP BY company
+ORDER BY 2 DESC;
+```
+
+---
+
+###  Date Range of Dataset
+```sql
+SELECT MIN(date),
+MAX(date)
+FROM layoffs_staging2;
+```
+
+---
+
+###  Total Layoffs by Industry
+```sql
+SELECT industry,
+SUM(total_laid_off)
+FROM layoffs_staging2
+GROUP BY industry
+ORDER BY 2 DESC;
+```
+
+---
+
+###  Total Layoffs by Country
+```sql
+SELECT country,
+SUM(total_laid_off)
+FROM layoffs_staging2
+GROUP BY country
+ORDER BY 2 DESC;
+```
+
+---
+
+###  Year-wise Layoffs
+```sql
+SELECT YEAR(date),
+SUM(total_laid_off)
+FROM layoffs_staging2
+GROUP BY YEAR(date)
+ORDER BY 1 DESC;
+```
+
+---
+
+###  Layoffs by Company Stage
+```sql
+SELECT stage,
+SUM(total_laid_off)
+FROM layoffs_staging2
+GROUP BY stage
+ORDER BY 1 DESC;
+```
+
+---
+
+###  Monthly Layoff Trends
+```sql
+SELECT SUBSTRING(date,1,7) AS Month,
+SUM(total_laid_off)
+FROM layoffs_staging2
+GROUP BY Month
+ORDER BY 1 ASC;
+```
+
+---
+
+###  Rolling Total of Layoffs
+```sql
+WITH rolling_total AS (
+SELECT SUBSTRING(date,1,7) AS Month,
+SUM(total_laid_off) AS total_off
+FROM layoffs_staging2
+GROUP BY Month
+ORDER BY 1 ASC
+)
+
+SELECT Month,
+total_off,
+SUM(total_off) OVER(ORDER BY Month) AS rolling_total
+FROM rolling_total;
+```
+
+---
+
+#  Insights Generated
+- Identified companies with the highest layoffs
+- Analyzed layoff trends across industries and countries
+- Examined yearly and monthly layoff patterns
+- Tracked cumulative layoffs over time using rolling totals
+- Compared layoffs based on company stages and funding
+
+---
